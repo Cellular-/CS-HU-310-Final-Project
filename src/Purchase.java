@@ -15,4 +15,8 @@ public class Purchase {
 	public int getQuantity() {
 		return quantity;
 	}
+	
+	public String toString() {
+		return String.format("Purchase - itemID : %s, quantity: %s", itemCode, quantity);
+	}
 }
