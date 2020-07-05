@@ -1,15 +1,11 @@
-# BSU-HU-CS-310-JDBC-Setup
-This repo contains code that can be used to test your JDBC setup.
+# BSU-HU-CS-310-Final-Project
+CS310 Final Project
 
 ## Compile Java
-``cd src``
-
-``make``
+TBD
 
 ## Setup
- ``
-make setup
-``
+TBD
 
 Add the JAR to your classpath
 
@@ -26,7 +22,3 @@ NOTE: you can put these in your bashrc file ``~/.bashrc``
 
 ## Run test
 ``java CheckDatabaseDriverSetup``
-
-or
-
-``make run``
