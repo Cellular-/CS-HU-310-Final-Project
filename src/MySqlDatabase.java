@@ -1,15 +1,25 @@
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MySqlDatabase {
     public static Connection getDatabaseConnection() throws SQLException {
+    	File envFile = new File(System.getProperty("user.dir") + "\\dev.env");
+    	
+    	String sw = "";
+    	if(envFile.exists()) {
+    		sw = "_LOCAL";
+    	}
+    	 	
         Connection databaseConnection = null;
-        int databasePort = Integer.parseInt(System.getenv("MYSQL_PORT"));
-        String databaseHost = System.getenv("MYSQL_HOST");
-        String databaseUsername = System.getenv("MYSQL_USERNAME");
-        String databasePassword = System.getenv("MYSQL_PASSWORD");
-        String databaseName = System.getenv("MYSQL_DATABASE");
+        int databasePort = Integer.parseInt(System.getenv("MYSQL_PORT" + sw));
+        String databaseHost = System.getenv("MYSQL_HOST" + sw);
+        String databaseUsername = System.getenv("MYSQL_USERNAME" + sw);
+        String databasePassword = System.getenv("MYSQL_PASSWORD" + sw);
+        String databaseName = System.getenv("MYSQL_DATABASE" + sw);
 
         return getDatabaseConnection(databaseUsername, databasePassword, databaseHost, databasePort, databaseName);
     }
