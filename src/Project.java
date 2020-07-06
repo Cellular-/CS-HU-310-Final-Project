@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Project {
-
 	public static Item createItem(String itemCode, String itemDescription, double price) throws SQLException {
 
 		Connection connection = null;
@@ -47,7 +46,7 @@ public class Project {
 
 		return purchase;
 	}
-
+	
 	public static void tryCreatePurchase(String itemID, int quantity) {
 		try {
 			Purchase purchase = createPurchase(itemID, quantity);
@@ -56,22 +55,50 @@ public class Project {
 			System.out.println("Error trying to create item");
 			System.out.println(sqlException.getMessage());
 		}
-	}
+	}	
 	
-	public static List<String> getItemIDs() throws SQLException {
+	public static Shipment createShipment(String itemCode, int quantity, String shipmentDate) throws SQLException {
 		Connection connection = null;
+		Shipment shipment = new Shipment(itemCode, quantity, shipmentDate);
 		connection = MySqlDatabase.getDatabaseConnection();
 		Statement sqlStatement = connection.createStatement();
-		String sql = "select ID from Item;";
-		ResultSet results = sqlStatement.executeQuery(sql); 
+
+		String sql = String.format("INSERT INTO Shipment (ItemID, quantity, shipmentDate) VALUES (%s, %s, '%s');",
+				shipment.getItemCode(), shipment.getQuantity(), shipment.getShipmentDate());
+
+		sqlStatement.executeUpdate(sql);
+		connection.close();
+
+		return shipment;
+	}
+	
+	public static void tryCreateShipment(String itemCode, int quantity, String dateTime) {
+		try {
+			Shipment shipment = createShipment(itemCode, quantity, dateTime);
+			System.out.println(shipment.toString());
+		} catch (SQLException sqlException) {
+			System.out.println("Error trying to create shipment.");
+			System.out.println(sqlException.getMessage());
+		}
+	}
+
+	private static int getItemID(String itemCode) {
+		Connection connection = null;
+		ResultSet results = null;
+		int itemId = 0;
 		
-		List<String> ids = new ArrayList<String>();
-		
-		while (results.next()) {
-			ids.add(results.getString(1));
+		try {
+			connection = MySqlDatabase.getDatabaseConnection();
+			Statement sqlStatement = connection.createStatement();
+			String sql = String.format("select ID from Item where itemCode = %s", itemCode);
+			results = sqlStatement.executeQuery(sql);
+			results.next();
+			itemId = results.getInt(1);
+		} catch (SQLException sqlException) {
+			
 		}
 		
-		return ids;
+		return itemId;
 	}
 
 	public static void main(String[] args) {
@@ -84,13 +111,17 @@ public class Project {
 			tryCreateItem(itemCode, itemDescription, price);
 
 		} else if (args[0].equals("CreatePurchase")) {
-			String itemID = args[1];
+			String itemCode = args[1];
 			int quantity = Integer.parseInt(args[2]);
 			
-			tryCreatePurchase(itemID, quantity);
+			tryCreatePurchase(Integer.toString(getItemID(itemCode)), quantity);
 
 		} else if (args[0].equals("CreateShipment")) {
-
+			String itemCode = args[1];
+			int quantity = Integer.parseInt(args[2]);
+			String dateTime = args[3];
+			
+			tryCreateShipment(Integer.toString(getItemID(itemCode)), quantity, dateTime);
 		} else if (args[0].equals("GetItems")) {
 
 		} else if (args[0].equals("GetShipments")) {

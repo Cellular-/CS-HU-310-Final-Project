@@ -23,4 +23,8 @@ public class Item {
 	public double getPrice() {
 		return price;
 	}
+	
+	public String toString() {
+		return String.format("Item - code : %s, desc: '%s', price %s", itemCode, itemDescription, price);
+	}
 }
