@@ -3,6 +3,7 @@ CS310 Final Project
 
 ## Compile Java
 `cd src`
+
 `javac *.java`
 
 ## Setup
