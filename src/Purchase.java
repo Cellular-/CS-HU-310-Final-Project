@@ -23,6 +23,6 @@ public class Purchase {
 	}
 	
 	public String toString() {
-		return String.format("Purchase - itemID : %s, quantity: %s, purchaseDate: %s", itemCode, quantity, purchaseDate);
+		return String.format("Purchase - itemCode: %s, quantity: %s, purchaseDate: %s", itemCode, quantity, purchaseDate);
 	}
 }
