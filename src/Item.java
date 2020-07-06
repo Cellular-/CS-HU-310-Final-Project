@@ -1,4 +1,3 @@
-
 public class Item {
 	private String itemCode, itemDescription;
 	private double price;

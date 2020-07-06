@@ -1,5 +1,3 @@
-import java.time.LocalDateTime;
-
 public class Shipment {
 	private String itemCode, shipmentDate;
 	private int quantity;
