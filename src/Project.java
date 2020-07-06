@@ -123,6 +123,35 @@ public class Project {
 		return items;
 	}
 	
+	private static ArrayList<Shipment> getShipmentsByItemCode(String filterValue) {
+		Connection connection = null;
+		ArrayList<Shipment> shipments = new ArrayList<Shipment>();
+
+		try {
+			connection = MySqlDatabase.getDatabaseConnection();
+			Statement sqlStatement = connection.createStatement();
+			String sql = String.format("select b.ItemCode, a.Quantity, a.ShipmentDate\r\n" + 
+									   "from Shipment a\r\n" + 
+									   "inner join Item b\r\n" + 
+									   "on a.ItemID = b.ID\r\n" + 
+									   "where b.ItemCode like '%s'",
+									  filterValue);
+			ResultSet results = sqlStatement.executeQuery(sql); 
+
+			while (results.next()) {
+				shipments.add(new Shipment(results.getString(1), results.getInt(2), results.getString(3)));
+			}
+		} catch (SQLException sqlException) {
+			System.out.println("Error trying to get shipments.");
+			System.out.println(sqlException.getMessage());
+		}
+		
+		return shipments;
+	}
+	
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		if (args[0].equals("CreateItem")) {
@@ -147,11 +176,15 @@ public class Project {
 		} else if (args[0].equals("GetItems")) {
 			String itemCode = args[1];
 			
-			for(Item item : getItemsByItemCode(itemCode)) {
-				System.out.println(item.toString());
+			for(Item member : getItemsByItemCode(itemCode)) {
+				System.out.println(member.toString());
 			}
 		} else if (args[0].equals("GetShipments")) {
-
+			String itemCode = args[1];
+			
+			for(Shipment member : getShipmentsByItemCode(itemCode)) {
+				System.out.println(member.toString());
+			}
 		} else if (args[0].equals("GetPurchases")) {
 
 		} else if (args[0].equals("ItemsAvailable")) {
