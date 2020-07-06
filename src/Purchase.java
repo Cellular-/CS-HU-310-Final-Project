@@ -1,11 +1,17 @@
 
 public class Purchase {
-	private String itemCode;
+	private String itemCode, purchaseDate;
 	private int quantity;
 	
 	public Purchase(String itemCode, int quantity) {
 		this.itemCode = itemCode;
 		this.quantity = quantity;
+	}
+	
+	public Purchase(String itemCode, int quantity, String purchaseDate) {
+		this.itemCode = itemCode;
+		this.quantity = quantity;
+		this.purchaseDate = purchaseDate;
 	}
 
 	public String getItemCode() {
@@ -17,6 +23,6 @@ public class Purchase {
 	}
 	
 	public String toString() {
-		return String.format("Purchase - itemID : %s, quantity: %s", itemCode, quantity);
+		return String.format("Purchase - itemID : %s, quantity: %s, purchaseDate: %s", itemCode, quantity, purchaseDate);
 	}
 }

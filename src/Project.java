@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -148,6 +149,34 @@ public class Project {
 		
 		return shipments;
 	}
+
+	private static ArrayList<Purchase> getPurchasesByItemCode(String filterValue) {
+		Connection connection = null;
+		ArrayList<Purchase> purchases = new ArrayList<Purchase>();
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");  
+		
+
+		try {
+			connection = MySqlDatabase.getDatabaseConnection();
+			Statement sqlStatement = connection.createStatement();
+			String sql = String.format("select b.ItemCode, a.Quantity, a.PurchaseDate\r\n" + 
+									   "from Purchase a\r\n" + 
+									   "inner join Item b\r\n" + 
+									   "on a.ItemID = b.ID\r\n" + 
+									   "where b.ItemCode like '%s'",
+									  filterValue);
+			ResultSet results = sqlStatement.executeQuery(sql); 
+
+			while (results.next()) {
+				purchases.add(new Purchase(results.getString(1), results.getInt(2), formatter.format(results.getDate(3))));
+			}
+		} catch (SQLException sqlException) {
+			System.out.println("Error trying to get shipments.");
+			System.out.println(sqlException.getMessage());
+		}
+		
+		return purchases;
+	}
 	
 	/**
 	 * @param args
@@ -186,7 +215,11 @@ public class Project {
 				System.out.println(member.toString());
 			}
 		} else if (args[0].equals("GetPurchases")) {
-
+			String itemCode = args[1];
+			
+			for(Purchase member : getPurchasesByItemCode(itemCode)) {
+				System.out.println(member.toString());
+			}
 		} else if (args[0].equals("ItemsAvailable")) {
 
 		} else if (args[0].equals("UpdateItem")) {
