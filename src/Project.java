@@ -171,11 +171,46 @@ public class Project {
 				purchases.add(new Purchase(results.getString(1), results.getInt(2), formatter.format(results.getDate(3))));
 			}
 		} catch (SQLException sqlException) {
-			System.out.println("Error trying to get shipments.");
+			System.out.println("Error trying to get purchases.");
 			System.out.println(sqlException.getMessage());
 		}
 		
 		return purchases;
+	}
+	
+	private static ArrayList<String> getItemsAvailable(String filterValue) {
+		Connection connection = null;
+		ArrayList<String> availableItems = new ArrayList<String>();
+		
+		try {
+			connection = MySqlDatabase.getDatabaseConnection();
+			Statement sqlStatement = connection.createStatement();
+			String sql = String.format("select \r\n" + 
+									   		"ItemCode, \r\n" + 
+											"ItemDescription,\r\n" + 
+											"sum(case when b.quantity IS NULL then 0 else b.quantity end) - sum(case when c.quantity IS NULL then 0 else c.quantity end) 'total_available'\r\n" + 
+										"from Item a\r\n" + 
+										"left join Purchase b\r\n" + 
+										"on a.ID = b.ItemID\r\n" + 
+										"left join Shipment c\r\n" + 
+										"on b.ItemID = c.ItemID\r\n" + 
+										"where a.ItemCode like '%s'\r\n" + 
+										"group by 1,2",
+									  filterValue);
+			ResultSet results = sqlStatement.executeQuery(sql); 
+
+			while (results.next()) {
+				availableItems.add(String.format("itemCode: %s, itemDesc: '%s', totalAvailable: %s", 
+								   results.getString(1), 
+								   results.getString(2), 
+								   results.getDouble(3)));
+			}
+		} catch (SQLException sqlException) {
+			System.out.println("Error trying to get available items.");
+			System.out.println(sqlException.getMessage());
+		}
+		
+		return availableItems;
 	}
 	
 	/**
@@ -221,11 +256,16 @@ public class Project {
 				System.out.println(member.toString());
 			}
 		} else if (args[0].equals("ItemsAvailable")) {
-
+			String itemCode = args[1];
+			
+			System.out.println("List of available items:");
+			for(String member : getItemsAvailable(itemCode)) {
+				System.out.println(member.toString());
+			}
 		} else if (args[0].equals("UpdateItem")) {
-
+			
 		} else if (args[0].equals("DeleteItem")) {
-
+			
 		} else if (args[0].equals("DeleteShipment")) {
 
 		} else if (args[0].equals("DeletePurchase")) {
