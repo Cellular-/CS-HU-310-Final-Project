@@ -101,6 +101,28 @@ public class Project {
 		return itemId;
 	}
 
+	private static ArrayList<Item> getItemsByItemCode(String filterValue) {
+		Connection connection = null;
+		ArrayList<Item> items = new ArrayList<Item>();
+
+		try {
+			connection = MySqlDatabase.getDatabaseConnection();
+			Statement sqlStatement = connection.createStatement();
+			String sql = String.format("select ItemCode, ItemDescription, Price from Item where ItemCode like '%s'",
+									  filterValue);
+			ResultSet results = sqlStatement.executeQuery(sql); 
+
+			while (results.next()) {
+				items.add(new Item(results.getString(1), results.getString(2), results.getInt(3)));
+			}
+		} catch (SQLException sqlException) {
+			System.out.println("Error trying to get items.");
+			System.out.println(sqlException.getMessage());
+		}
+		
+		return items;
+	}
+	
 	public static void main(String[] args) {
 
 		if (args[0].equals("CreateItem")) {
@@ -123,7 +145,11 @@ public class Project {
 			
 			tryCreateShipment(Integer.toString(getItemID(itemCode)), quantity, dateTime);
 		} else if (args[0].equals("GetItems")) {
-
+			String itemCode = args[1];
+			
+			for(Item item : getItemsByItemCode(itemCode)) {
+				System.out.println(item.toString());
+			}
 		} else if (args[0].equals("GetShipments")) {
 
 		} else if (args[0].equals("GetPurchases")) {
