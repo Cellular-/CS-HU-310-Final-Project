@@ -1,4 +1,3 @@
-
 public class Purchase {
 	private String itemCode, purchaseDate;
 	private int quantity;
