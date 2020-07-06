@@ -194,12 +194,12 @@ public class Project {
 										"from Item a\r\n" + 
 										"left join \r\n" + 
 											"(select ItemID, sum(quantity) as 'total_purchases'\r\n" + 
-											"from purchase\r\n" + 
+											"from Purchase\r\n" + 
 											"group by 1)  purchases\r\n" + 
 										"on a.ID = purchases.ItemID\r\n" + 
 										"left join \r\n" + 
 											"(select ItemID, sum(quantity) total_shipments\r\n" + 
-											"from shipment\r\n" + 
+											"from Shipment\r\n" + 
 											"group by 1) shipments\r\n" + 
 										"on a.ID = shipments.ItemID\r\n" + 
 										"where a.ItemCode like '%s'",
@@ -252,7 +252,7 @@ public class Project {
 			
 			if(itemID != -1) {
 				sqlStatement.executeUpdate(sql);
-				System.out.println(String.format("Deleted item withi temCode '%s'", itemCode));
+				System.out.println(String.format("Deleted item with temCode '%s'", itemCode));
 			} else {
 				System.out.println(String.format("No items to delete for ItemCode '%s'", itemCode));
 			}
@@ -269,7 +269,7 @@ public class Project {
 			connection = MySqlDatabase.getDatabaseConnection();
 			Statement sqlStatement = connection.createStatement();
 			int itemID = getItemID(itemCode);
-			String sql = String.format("delete from shipment where ItemID = '%s' order by ShipmentDate desc limit 1", itemID);
+			String sql = String.format("delete from Shipment where ItemID = '%s' order by ShipmentDate desc limit 1", itemID);
 
 			if(itemID != -1) {
 				sqlStatement.executeUpdate(sql);
@@ -289,7 +289,7 @@ public class Project {
 		try {
 			connection = MySqlDatabase.getDatabaseConnection();
 			int itemID = getItemID(itemCode);
-			String sql = "delete from purchase where ItemID = ? order by PurchaseDate desc limit 1";
+			String sql = "delete from Purchase where ItemID = ? order by PurchaseDate desc limit 1";
 
 			if(itemID != -1) {
 				PreparedStatement ps = connection.prepareStatement(sql);
