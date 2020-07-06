@@ -25,6 +25,6 @@ public class Item {
 	}
 	
 	public String toString() {
-		return String.format("Item - code : %s, desc: '%s', price %s", itemCode, itemDescription, price);
+		return String.format("Item - itemCode: %s, desc: '%s', price %s", itemCode, itemDescription, price);
 	}
 }

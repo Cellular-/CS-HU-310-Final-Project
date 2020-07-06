@@ -91,7 +91,7 @@ public class Project {
 		try {
 			connection = MySqlDatabase.getDatabaseConnection();
 			Statement sqlStatement = connection.createStatement();
-			String sql = String.format("select ID from Item where itemCode = %s", itemCode);
+			String sql = String.format("select ID from Item where itemCode = '%s'", itemCode);
 			results = sqlStatement.executeQuery(sql);
 			results.next();
 			itemId = results.getInt(1);

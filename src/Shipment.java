@@ -23,6 +23,6 @@ public class Shipment {
 	}
 	
 	public String toString() {
-		return String.format("Shipment - itemCode : %s, quantity: %s, shipmentDate: %s", itemCode, quantity, shipmentDate);
+		return String.format("Shipment - itemCode: %s, quantity: %s, shipmentDate: %s", itemCode, quantity, shipmentDate);
 	}
 }
