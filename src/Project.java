@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -101,6 +102,85 @@ public class Project {
 		return itemId;
 	}
 
+	private static ArrayList<Item> getItemsByItemCode(String filterValue) {
+		Connection connection = null;
+		ArrayList<Item> items = new ArrayList<Item>();
+
+		try {
+			connection = MySqlDatabase.getDatabaseConnection();
+			Statement sqlStatement = connection.createStatement();
+			String sql = String.format("select ItemCode, ItemDescription, Price from Item where ItemCode like '%s'",
+									  filterValue);
+			ResultSet results = sqlStatement.executeQuery(sql); 
+
+			while (results.next()) {
+				items.add(new Item(results.getString(1), results.getString(2), results.getInt(3)));
+			}
+		} catch (SQLException sqlException) {
+			System.out.println("Error trying to get items.");
+			System.out.println(sqlException.getMessage());
+		}
+		
+		return items;
+	}
+	
+	private static ArrayList<Shipment> getShipmentsByItemCode(String filterValue) {
+		Connection connection = null;
+		ArrayList<Shipment> shipments = new ArrayList<Shipment>();
+
+		try {
+			connection = MySqlDatabase.getDatabaseConnection();
+			Statement sqlStatement = connection.createStatement();
+			String sql = String.format("select b.ItemCode, a.Quantity, a.ShipmentDate\r\n" + 
+									   "from Shipment a\r\n" + 
+									   "inner join Item b\r\n" + 
+									   "on a.ItemID = b.ID\r\n" + 
+									   "where b.ItemCode like '%s'",
+									  filterValue);
+			ResultSet results = sqlStatement.executeQuery(sql); 
+
+			while (results.next()) {
+				shipments.add(new Shipment(results.getString(1), results.getInt(2), results.getString(3)));
+			}
+		} catch (SQLException sqlException) {
+			System.out.println("Error trying to get shipments.");
+			System.out.println(sqlException.getMessage());
+		}
+		
+		return shipments;
+	}
+
+	private static ArrayList<Purchase> getPurchasesByItemCode(String filterValue) {
+		Connection connection = null;
+		ArrayList<Purchase> purchases = new ArrayList<Purchase>();
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");  
+		
+
+		try {
+			connection = MySqlDatabase.getDatabaseConnection();
+			Statement sqlStatement = connection.createStatement();
+			String sql = String.format("select b.ItemCode, a.Quantity, a.PurchaseDate\r\n" + 
+									   "from Purchase a\r\n" + 
+									   "inner join Item b\r\n" + 
+									   "on a.ItemID = b.ID\r\n" + 
+									   "where b.ItemCode like '%s'",
+									  filterValue);
+			ResultSet results = sqlStatement.executeQuery(sql); 
+
+			while (results.next()) {
+				purchases.add(new Purchase(results.getString(1), results.getInt(2), formatter.format(results.getDate(3))));
+			}
+		} catch (SQLException sqlException) {
+			System.out.println("Error trying to get shipments.");
+			System.out.println(sqlException.getMessage());
+		}
+		
+		return purchases;
+	}
+	
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		if (args[0].equals("CreateItem")) {
@@ -123,11 +203,23 @@ public class Project {
 			
 			tryCreateShipment(Integer.toString(getItemID(itemCode)), quantity, dateTime);
 		} else if (args[0].equals("GetItems")) {
-
+			String itemCode = args[1];
+			
+			for(Item member : getItemsByItemCode(itemCode)) {
+				System.out.println(member.toString());
+			}
 		} else if (args[0].equals("GetShipments")) {
-
+			String itemCode = args[1];
+			
+			for(Shipment member : getShipmentsByItemCode(itemCode)) {
+				System.out.println(member.toString());
+			}
 		} else if (args[0].equals("GetPurchases")) {
-
+			String itemCode = args[1];
+			
+			for(Purchase member : getPurchasesByItemCode(itemCode)) {
+				System.out.println(member.toString());
+			}
 		} else if (args[0].equals("ItemsAvailable")) {
 
 		} else if (args[0].equals("UpdateItem")) {
